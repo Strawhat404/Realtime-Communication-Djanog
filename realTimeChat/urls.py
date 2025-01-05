@@ -16,7 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter,URLRouter
+from communication.consumers import ChatConsumer
 
+
+application = ProtocolTypeRouter({
+    
+})
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
