@@ -28,6 +28,4 @@ application = ProtocolTypeRouter({
         ])
     )
 })
-urlpatterns = [
-    path('admin/', admin.site.urls),
-]
+
