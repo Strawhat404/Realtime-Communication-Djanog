@@ -22,7 +22,11 @@ from communication.consumers import ChatConsumer
 
 
 application = ProtocolTypeRouter({
-    
+    'websocket':AuthMiddlewareStack(
+        URLRouter
+            path('ws/chat/,ChatConsumer.as_asgi())
+        ])
+    )
 })
 urlpatterns = [
     path('admin/', admin.site.urls),
