@@ -9,7 +9,7 @@ class BeaconConsumer(AsyncWebsocketConsumer):
         #join the group section
         
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-        await.self.accept()
+        await self.accept()
         
     async def disconnect(self,close_code):
         #a section to leave the group
