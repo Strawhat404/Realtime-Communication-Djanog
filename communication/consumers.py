@@ -8,7 +8,7 @@ from .models import ProximityEvent,Notificaiton,BeaconDevice
 
 class BeaconConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.user = self.scope["user"]
+        self.user = self.scope["user"] # scope is a dictionary that is established during handshake of websocket connection
         if not self.user.is_authenticated():
             await self.close()
             return
@@ -19,7 +19,7 @@ class BeaconConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
     async def recieve(self,text_data):
         try:
-            data = json_loads(text_data)
+            data = json.loads(text_data)
             event_type = data.get('type')
             
             if event_type == 'proximity_event':
