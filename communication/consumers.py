@@ -1,42 +1,66 @@
-from channels.generic.websocket import AsyncJsonWebsocketConsumer
 import json
+
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+
+from .models import ProximityEvent,Notificaiton,BeaconDevice
+
 
 class BeaconConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name  = self.scope['url_route']['kwargs']['beacon_id']
-        self.room_group_name = f"beacon_{self.room_name}"
-        
-        #join the group section
-        
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        self.user = self.scope["user"]
+        if not self.user.is_authenticated():
+            await self.close()
+            return
+        self.room_name = f"user_{self.user.id}"
+        await self.channel_layer.group_add(self.room_name,self.channel_name)
         await self.accept()
-        
     async def disconnect(self,close_code):
-        #a section to leave the group
-        
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+        await self.channel_layer.group_discard(self.room_name, self.channel_name)
     async def recieve(self,text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-        
-        
-        #send the message to group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type':'beacon_message',
-                'message':message
-            }
+        try:
+            data = json_loads(text_data)
+            event_type = data.get('type')
+            
+            if event_type == 'proximity_event':
+                await self.handle_proximity_event(data)
+            elif event_type == 'notification_ack':
+                await self.handle_notification_ack(data)
+                
+        except json.JSONDecodeError:
+            await self.send(text_data=json.dumps({
+                'erro': 'Invalid JSON format'
+            }))
+    @database_sync_to_async
+    def create_proximity_event(self,beacon_id,distance):
+        beacon = BeaconDevice.objects.get(id = beacon_id)
+        return ProximityEvent.objects.create(
+            beacon = beacon,
+            user = self.user,
+            distance = distance
+            
         )
-    async def beacon_message(self,event):
-        message = event['message']
+        
+    async def handle_proximity_event(self,data):
+        try:
+            event = await self.create_proximity_event(
+                data['beacon_id'],
+                data['distance']
+            )
+            await self.channel_layer.group_send(
+                self.room_name,
+                {
+                    'type':'proximity_update',
+                    'beacon_id':data['beacon_id'],
+                    'distance':data['distance'],
+                    'timestamp':event.timestamp.isoformat()
+                }
+            )
+        except Exception as e:
+            await self.send(text_data=json.dumps({
+                'error':str(e)
+                }))
+    async def proximity_update(self,event):
+        await self.send(text_data= json.dumps(event))
         
         
-        
-        #sending message to Websocket
-        await self.send(text_data=json.dumps({
-            'message':message
-        }))
