@@ -1,4 +1,4 @@
-from rest_framework import viewset
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import BeaconDevice, ProximityEvent, Notification
@@ -15,4 +15,20 @@ class BeaconDeviceViewSet(viewsets.ModelViewSet):
         events = ProximityEvent.objects.filter(beacom = beacon)
         serializer = ProximityEventSerializer(events,many=True)
         return Response (serializer.data)
-        
+class ProximityEventViewSet(viewsets.MobileViewSet):
+    serializer_class = ProximityEventSerializer
+    
+    def get_queryset(self):
+        return ProximityEvent.objects.filter(user=self.request.user)
+    
+class NotificationViewSet(viewsets.ModelViewSet):
+    serializer_class = NotificationSerializer
+    
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user)
+    
+    @action(detail=False, methods = ['GET'])
+    def unread(self,request):
+        notficiations = self.get_queryset().filter(is_read=False)
+        serializer = self.get_serializer(notifications, many=True)
+        return Response(serializer.data)
