@@ -1,11 +1,12 @@
-from django.urls import path
+from django.urls import path,include
+from rest_framework.routers import DefaultRouter
 from . import views
-from .consumers import ChatConsumer
 
-
-#HTTP response to be sent
+router = DefaultRouter()
+router.register(r'beacons', views.BeaconDeviceViewSet)
+router.register(r'events', views.ProximityEventViewSet, basename='events')
+router.register(r'notifications',views.NotificationViewSet, basename='notifications')
 
 urlpatterns = [
-    path('',views.index,name='index'),
-    path('message/',views.message_view, name='message'),
+    path('',include(router.urls)),
 ]
