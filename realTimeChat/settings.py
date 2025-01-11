@@ -8,7 +8,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'channels',
     'corsheaders',
-    'realtime_comm',
+    'communication',
 ]
 
 MIDDLEWARE = [

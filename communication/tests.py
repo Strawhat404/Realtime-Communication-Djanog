@@ -2,7 +2,7 @@ import pytest
 from channels.testing import WebsocketCommunicator
 from django.contrib.auth import get_user_model
 from .models import BeaconDevice, ProximityEvent
-from beacon_project.asgi import application
+from realTimeChat.asgi import application
 
 @pytest.mark.asyncio
 async def test_websocket_connection():
