@@ -12,9 +12,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'channels',
     'corsheaders',
     'communication',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -49,13 +51,57 @@ CORS_ALLOWED_ORIGINS = [
 # settings for REST Framework 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_THROTTLE_CLASSES':[
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttline.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES':{
+        'anon': '100/day'
+        'user: 1000/day'
+    }
 }
 
+#Password Validation
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME':'django.contrib.auth.password_validation.UserAttributSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS':{
+            'min-length':8,
+        }
+    },
+    {
+        'NAME':'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME':'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+
+#setting for Security
+SECURE_SSL_REDIRECT = False # default / set to True in Production
+SESSION_COOKIE_SECURE = False # default / set to True in production
+CSRF_COOKIE_SECURE = False # default / set to True in
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X-FRAME_OPTIONS = 'DENY'
+
+
+#settings for SESSION
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = '1209600' #Two weeks in seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+ 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
