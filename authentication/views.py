@@ -53,6 +53,39 @@ class AuthViewSet(viewsets.GenericViewset):
         token, _ = Token.objects.get_or_create(user = user)
         
         
-        #I will the logic for failed login attempts here
+        #I will write the logic for failed login attempts here
+        user.failed_login_attempts = 0
+        user.save()
+        
+        
+        #Record login history
+        LoginHistory.objects.create(user=user,
+                                    ip_address = self._get_client_ip(request),
+                                    device_info = request.META.get('HTTP_USER_AGENT',''),
+                                    status = 'success'
+                                    )
+        return Response({
+            'token':token.key,
+            'user_id':user.id
+        })
+        
+    def _handle_failed_login(self,username):
+        try:
+            user =User.objects.get(username = username)
+            user.failed_login_attempts +=1
+            
+            if user.failed_login_attempts >=5:
+                user.account_locked_until = timezone.now() + timedelta(minutes = 30)
+                user.save()
+            LoginHistory.objects.create(
+                user = user,
+                ip_address = self._get_client_ip(self,request),
+                device_info = self.request.META.get('HTTP_USER_AGENT',''),
+                status = 'failed'
+            )
+        except User.DoesNotExist:
+            pass
+            
+            
               
         
