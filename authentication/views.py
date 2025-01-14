@@ -26,5 +26,33 @@ class AuthViewSet(viewsets.GenericViewset):
                 'user_id': user.id }
                             ,status = status.HTTP_201_CREATED)
         return Response(serializer.errors,status = status.Http_400_BAD_REQUEST)
+    
+    @action(detail = False, methods = ['POST'])
+    def login(self,request):
+        username = request.data.get('username')
+        password = request.data.get('password')
         
+        if not username or not password:
+            return Response({
+                'error':'Please provide bot username and password'}, status = status.HTTP_400_BAD_REQUEST)
+            
+        user = authenticate(username = username, password = password )
+        
+        if not user:
+            self._handle_failed_login(username)
+            return Response({
+                'error':'invalid credentials'
+            }, status = status.HTTP_401_UNAUTHORIZED)
+            
+        if user.account_locked_until and user.account_locked_until > timezone.now():
+            return Response({
+                'error':'Account is temporarily locked'
+            },status = status.HTTP_403_FORBIDDEN)
+            
+        login(request,user)
+        token, _ = Token.objects.get_or_create(user = user)
+        
+        
+        #I will the logic for failed login attempts here
+              
         
