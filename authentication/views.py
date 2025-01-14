@@ -103,5 +103,11 @@ class UserDeviceViewSet(viewsets.ModelViewSet):
     def perform_create(self,serializer):
         serializer.save(user=self.request.user)
         
+class LoginHistoryViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = LoginHistorySerializer
+    
+    def get_queryset(self):
+        return LoginHistory.objects.filter(user = self.request.user)
               
         
