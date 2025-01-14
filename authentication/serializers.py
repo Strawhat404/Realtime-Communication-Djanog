@@ -39,3 +39,8 @@ class UserDeviceSerializer(serializers.ModelSerializer):
         new_password = serializers.Charfield(required = True, min_length = 8)
         confirm_new_password = serializers.CharField(requiered= True)
         
+        
+        def validate(self,data):
+            if data['new_password'] != data['confirm_new_password']:
+                raise serializers.ValidationError("New password do not match")
+            return data
