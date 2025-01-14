@@ -29,6 +29,6 @@ class NotificationViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods = ['GET'])
     def unread(self,request):
-        notficiations = self.get_queryset().filter(is_read=False)
+        notifications = self.get_queryset().filter(is_read=False)
         serializer = self.get_serializer(notifications, many=True)
         return Response(serializer.data)
