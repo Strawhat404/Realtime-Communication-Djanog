@@ -27,3 +27,9 @@ class UserDevice(models.Model):
 class LoginHistory(models.Model):
     user = models.ForeignKey(User,on_delete= CASCADE, related_name = 'login_history')
     login_datetime = models.DateTimeField(auto_now_add = True)
+    ip_address = models.GenericIpAddressField()
+    device_info = models.Charfield(max_length = 255)
+    status = models.CharField(max_length = 20)
+    
+    location = models.CharField(max_length = 255, blank = True, null = True)
+    
