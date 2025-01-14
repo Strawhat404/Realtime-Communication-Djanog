@@ -79,13 +79,29 @@ class AuthViewSet(viewsets.GenericViewset):
                 user.save()
             LoginHistory.objects.create(
                 user = user,
-                ip_address = self._get_client_ip(self,request),
+                ip_address = self._get_client_ip(self.request),
                 device_info = self.request.META.get('HTTP_USER_AGENT',''),
                 status = 'failed'
             )
         except User.DoesNotExist:
             pass
             
-            
+    
+    def _get_client_ip(self,request):
+        x_forwarded_for = request.META.get  ('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            return x_forwarded_for.split(',')[0]
+        return request.META.get('REMOTE_ADDR')
+    
+class UserDeviceViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserDeviceSerializer
+    
+    def get_queryset(self):
+        return UserDevice.objects.filter(user=self.request.user)
+    
+    def perform_create(self,serializer):
+        serializer.save(user=self.request.user)
+        
               
         
