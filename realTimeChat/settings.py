@@ -44,6 +44,8 @@ CHANNEL_LAYERS = {
     },
 }
 
+ROOT_URLCONF = 'realTimeChat.urls' 
+
 # Settings for CORS
 CORS_ALLOW_ALL_ORIGINS = True  # For development only
 CORS_ALLOWED_ORIGINS = [

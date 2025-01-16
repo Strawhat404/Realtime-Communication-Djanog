@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 from django.db.models import CASCADE
 
@@ -14,6 +14,18 @@ class User(AbstractUser):
     last_login_ip = models.GenericIPAddressField(null= True,blank= True)
     failed_login_attempts = models.PositiveIntegerField(default = 0)
     account_locked_untill = models.DateTimeField(null=True,blank = True)
+    # Avoid reverse accessor conflicts
+    groups = models.ManyToManyField(
+        Group,
+        related_name="custom_user_groups",  # Unique related_name
+        blank=True,
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name="custom_user_permissions",  # Unique related_name
+        blank=True,
+    )
+    
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
