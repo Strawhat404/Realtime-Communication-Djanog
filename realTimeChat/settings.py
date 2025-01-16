@@ -62,8 +62,8 @@ REST_FRAMEWORK = {
         'rest_framework.throttline.UserRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES':{
-        'anon': '100/day'
-        'user: 1000/day'
+        'anon': '100/day',
+        'user': '1000/day',
     }
 }
 
@@ -71,7 +71,7 @@ REST_FRAMEWORK = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME':'django.contrib.auth.password_validation.UserAttributSimilarityValidator',
+        'NAME':'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -94,18 +94,18 @@ SESSION_COOKIE_SECURE = False # default / set to True in production
 CSRF_COOKIE_SECURE = False # default / set to True in
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-X-FRAME_OPTIONS = 'DENY'
+X_FRAME_OPTIONS = 'DENY'
 
 
 #settings for SESSION
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = '1209600' #Two weeks in seconds
+SESSION_COOKIE_AGE = 1209600 #Two weeks in seconds
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
  
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR/ 'templates')],  # Create a templates folder in your project root
+        'DIRS': [os.path.join(BASE_DIR,'templates')],  # Create a templates folder in your project root
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
