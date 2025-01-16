@@ -1,8 +1,11 @@
 import os
-
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True  # Change to False in production
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -41,14 +44,14 @@ CHANNEL_LAYERS = {
     },
 }
 
-#settings for CORS
+# Settings for CORS
 CORS_ALLOW_ALL_ORIGINS = True  # For development only
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
 ]
 
-# settings for REST Framework 
+# Settings for REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -57,55 +60,60 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_THROTTLE_CLASSES':[
+    'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttline.UserRateThrottle'
+        'rest_framework.throttling.UserRateThrottle'
     ],
-    'DEFAULT_THROTTLE_RATES':{
+    'DEFAULT_THROTTLE_RATES': {
         'anon': '100/day',
         'user': '1000/day',
     }
 }
 
-#Password Validation
-
+# Password Validation
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME':'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS':{
-            'min-length':8,
+        'OPTIONS': {
+            'min_length': 8,
         }
     },
     {
-        'NAME':'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME':'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
-
-#setting for Security
-SECURE_SSL_REDIRECT = False # default / set to True in Production
-SESSION_COOKIE_SECURE = False # default / set to True in production
-CSRF_COOKIE_SECURE = False # default / set to True in
+# Settings for Security
+SECURE_SSL_REDIRECT = False  # Default / set to True in production
+SESSION_COOKIE_SECURE = False  # Default / set to True in production
+CSRF_COOKIE_SECURE = False  # Default / set to True in production
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
-
-#settings for SESSION
+# Settings for Sessions
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 1209600 #Two weeks in seconds
+SESSION_COOKIE_AGE = 1209600  # Two weeks in seconds
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
- 
+
+# Static and Media Files
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],  # Create a templates folder in your project root
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Create a templates folder in your project root
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
