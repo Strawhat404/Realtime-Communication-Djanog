@@ -12,7 +12,7 @@ from .serializers import (
     UserRegistrationSerializer,UserDeviceSerializer,LoginHistorySerializer,ChangePasswordSerializer
 )
 
-class AuthViewSet(viewsets.GenericViewset):
+class AuthViewSet(viewsets.GenericViewSet):
     permission_classes = [AllowAny]
     
     @action(detail = False, methods=['post'])

@@ -47,3 +47,14 @@ class LoginHistory(models.Model):
     
     location = models.CharField(max_length = 255, blank = True, null = True)
     
+class JWTBlacklist(models.Model):
+    token = models.CharField(max_length=500)
+    blacklisted_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['token']),
+            models.Index(fields=['expires_at']),
+        ]
+    
